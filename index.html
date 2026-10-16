@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Moto Stock</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9ecef;--card:#fff;--ink:#161a20;--mute:#5a6470;--line:#d3d8de;--red:#d2232a;--redink:#fff;--chip:#f1f3f5;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171c;--card:#1e232a;--ink:#eef1f4;--mute:#9aa4af;--line:#323a44;--chip:#272d35;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14171c;--card:#1e232a;--ink:#eef1f4;--mute:#9aa4af;--line:#323a44;--chip:#272d35;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 Barlow,system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input{font:inherit;color:inherit}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:12px 14px;border-bottom:1px solid var(--line)}
+.bar{max-width:1100px;margin:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+h1{font:700 26px/1 "Barlow Condensed",Impact,sans-serif;margin:0 auto 0 0;letter-spacing:.3px}
+h1 small{font:500 14px Barlow,sans-serif;color:var(--mute);margin-left:8px}
+.search{flex:1 1 220px;min-width:0;border:1.5px solid var(--line);background:var(--card);border-radius:8px;padding:10px 12px}
+.btn{border:1.5px solid var(--line);background:var(--card);border-radius:8px;padding:9px 14px;font-weight:600;cursor:pointer}
+.btn.red{background:var(--red);border-color:var(--red);color:var(--redink)}
+.btn.sm{padding:7px 10px;font-size:14px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:focus-visible,.search:focus-visible,input:focus-visible,.th:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+main{max-width:1100px;margin:auto;padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+.main{position:relative;aspect-ratio:4/3;background:var(--chip);display:grid;place-items:center;color:var(--mute)}
+.main img{width:100%;height:100%;object-fit:cover;display:block}
+.id{position:absolute;left:8px;top:8px;background:var(--ink);color:var(--bg);font:700 15px "Barlow Condensed",sans-serif;letter-spacing:.5px;padding:3px 8px;border-radius:5px}
+.cnt{position:absolute;right:8px;top:8px;background:rgba(0,0,0,.65);color:#fff;font-size:13px;padding:2px 8px;border-radius:5px}
+.thumbs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:4px;background:var(--card)}
+.th{aspect-ratio:1;border:2px solid transparent;padding:0;border-radius:5px;overflow:hidden;background:var(--chip);cursor:pointer}
+.th img{width:100%;height:100%;object-fit:cover;display:block}
+.th.on{border-color:var(--red)}
+.info{padding:8px 12px 12px;display:flex;flex-direction:column;gap:2px}
+.model{font:700 24px/1.1 "Barlow Condensed",Impact,sans-serif}
+.meta{color:var(--mute)}
+.price{font:700 26px/1.1 "Barlow Condensed",sans-serif;color:var(--red);margin-top:4px}
+.acts{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.acts .btn:first-child{flex:1 1 auto}
+.empty{grid-column:1/-1;text-align:center;color:var(--mute);padding:50px 10px}
+dialog{border:none;border-radius:12px;padding:0;width:min(560px,94vw);max-height:92vh;background:var(--card);color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+form{padding:16px;display:grid;gap:12px}
+form h2{font:700 24px "Barlow Condensed",sans-serif;margin:0}
+label{display:grid;gap:4px;font-weight:600;font-size:14px}
+label input{border:1.5px solid var(--line);background:var(--bg);border-radius:8px;padding:10px;font-weight:400;font-size:16px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.eg{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.ei{position:relative;aspect-ratio:1;border-radius:6px;overflow:hidden;background:var(--chip)}
+.ei img{width:100%;height:100%;object-fit:cover}
+.ei button{position:absolute;right:2px;top:2px;width:26px;height:26px;border:none;border-radius:50%;background:var(--red);color:#fff;font-weight:700;cursor:pointer;line-height:1}
+.hint{color:var(--mute);font-size:13px}
+.row{display:flex;gap:8px;justify-content:flex-end}
+#toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20;max-width:90vw;text-align:center}
+#toast.show{opacity:1}
+@media(prefers-reduced-motion:reduce){#toast{transition:none}}
+</style></head>
+<body>
+<header><div class="bar">
+<h1>Moto Stock<small id="count"></small></h1>
+<input id="q" class="search" type="search" placeholder="Search by model name or ID" aria-label="Search by model name or ID">
+<button class="btn red" id="add">+ Add motorcycle</button>
+</div></header>
+<main id="list"></main>
+
+<dialog id="dlg"><form id="f" method="dialog" onsubmit="return false">
+<h2 id="dt">Add motorcycle</h2>
+<label>Model<input id="fm" required maxlength="80" placeholder="e.g. Honda Scoopy"></label>
+<div class="two">
+<label>Year<input id="fy" type="number" inputmode="numeric" min="1980" max="2100" placeholder="2024"></label>
+<label>Price (USD)<input id="fp" type="number" inputmode="decimal" min="0" step="any" placeholder="1850"></label>
+</div>
+<div><strong>Photos</strong> <span class="hint" id="pc"></span></div>
+<div class="eg" id="eg"></div>
+<div class="row" style="justify-content:flex-start"><button type="button" class="btn sm" id="pick">Add photos</button><span class="hint" style="align-self:center">Up to 5 per motorcycle</span></div>
+<input id="file" type="file" accept="image/*" multiple hidden>
+<div class="row"><button type="button" class="btn" id="cancel">Cancel</button><button type="button" class="btn red" id="save">Save</button></div>
+</form></dialog>
+<div id="toast" role="status"></div>
+
+<script>
+const MAX=5;
+let db=null,mem=[],items=[],q='',cur=null,busy=false;
+const sel=new Map(),urls=new WeakMap();
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const url=b=>{let u=urls.get(b);if(!u){u=URL.createObjectURL(b);urls.set(b,u)}return u};
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2600)}
+
+function openDB(){return new Promise((res,rej)=>{try{const r=indexedDB.open('motostock',1);r.onupgradeneeded=()=>r.result.createObjectStore('moto',{keyPath:'id'});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}})}
+function run(mode,fn){return new Promise((res,rej)=>{const t=db.transaction('moto',mode),r=fn(t.objectStore('moto'));t.oncomplete=()=>res(r&&r.result);t.onerror=()=>rej(t.error)})}
+async function persist(m){if(db)await run('readwrite',s=>s.put(m))}
+async function unpersist(id){if(db)await run('readwrite',s=>s.delete(id))}
+const num=id=>parseInt(String(id).replace(/\D/g,''),10)||0;
+function nextId(){return 'M-'+String(Math.max(0,...items.map(m=>num(m.id)))+1).padStart(3,'0')}
+
+async function shrink(file){
+  const bmp=await createImageBitmap(file);
+  const k=Math.min(1,1280/Math.max(bmp.width,bmp.height));
+  const c=document.createElement('canvas');c.width=Math.round(bmp.width*k);c.height=Math.round(bmp.height*k);
+  c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
+  return new Promise(r=>c.toBlob(r,'image/jpeg',.82));
+}
+
+function render(){
+  const t=q.trim().toLowerCase();
+  const list=items.filter(m=>!t||m.model.toLowerCase().includes(t)||m.id.toLowerCase().includes(t)||(/^\d+$/.test(t)&&num(m.id)===+t))
+    .sort((a,b)=>num(b.id)-num(a.id));
+  $('#count').textContent=items.length?`${list.length} of ${items.length}`:'';
+  $('#list').innerHTML=list.length?list.map(card).join(''):
+    `<div class="empty">${items.length?'No motorcycle matches your search.':'No motorcycles yet. Tap “Add motorcycle” to create the first one.'}</div>`;
+}
+function card(m){
+  const n=m.images.length,i=Math.min(sel.get(m.id)||0,Math.max(0,n-1));
+  const main=n?`<img src="${url(m.images[i])}" alt="${esc(m.model)}">`:'No photo';
+  const th=n>1?`<div class="thumbs">${m.images.map((b,k)=>`<button class="th${k===i?' on':''}" data-a="th" data-id="${m.id}" data-k="${k}" aria-label="Photo ${k+1}"><img src="${url(b)}" alt=""></button>`).join('')}</div>`:'';
+  return `<article class="card"><div class="main"><span class="id">${esc(m.id)}</span>${n?`<span class="cnt">${i+1}/${n}</span>`:''}${main}</div>${th}
+  <div class="info"><div class="model">${esc(m.model)}</div><div class="meta">${m.year?'Year '+esc(m.year):'Year not set'}</div>
+  <div class="price">${m.price!==''&&m.price!=null?'$'+Number(m.price).toLocaleString():'No price'}</div>
+  <div class="acts"><button class="btn sm" data-a="dl" data-id="${m.id}" ${n?'':'disabled'}>Download photos (${n})</button><button class="btn sm" data-a="ed" data-id="${m.id}">Edit</button><button class="btn sm" data-a="rm" data-id="${m.id}">Delete</button></div></div></article>`;
+}
+
+$('#list').addEventListener('click',async e=>{
+  const b=e.target.closest('[data-a]');if(!b)return;
+  const m=items.find(x=>x.id===b.dataset.id);if(!m)return;
+  const a=b.dataset.a;
+  if(a==='th'){sel.set(m.id,+b.dataset.k);render()}
+  else if(a==='ed')openEditor(m);
+  else if(a==='rm'){if(confirm(`Delete ${m.id} ${m.model}? This also removes its photos.`)){items=items.filter(x=>x!==m);try{await unpersist(m.id)}catch(_){}render();toast('Deleted '+m.id)}}
+  else if(a==='dl')download(m);
+});
+
+async function download(m){
+  const d=window.claude?await claude.use('downloads').catch(()=>null):null;
+  if(!d){toast('Download is not available in this view. Open the page in claude.ai.');return}
+  let ok=0;
+  for(let i=0;i<m.images.length;i++){
+    try{await d.save({filename:`${m.id}-${m.model.replace(/[^\w]+/g,'-').replace(/^-|-$/g,'')}-${i+1}.jpg`,data:m.images[i]});ok++}
+    catch(err){if(err&&err.code==='declined')break;toast('Could not save photo '+(i+1));break}
+  }
+  if(ok)toast(`Saved ${ok} photo${ok>1?'s':''} to your device`);
+}
+
+function openEditor(m){
+  cur=m?{...m,images:[...m.images],isNew:false}:{id:nextId(),model:'',year:'',price:'',images:[],isNew:true};
+  $('#dt').textContent=m?`Edit ${m.id}`:'Add motorcycle';
+  $('#fm').value=cur.model;$('#fy').value=cur.year;$('#fp').value=cur.price;
+  drawEditor();$('#dlg').showModal();
+}
+function drawEditor(){
+  $('#eg').innerHTML=cur.images.map((b,k)=>`<div class="ei"><img src="${url(b)}" alt="Photo ${k+1}"><button type="button" data-k="${k}" aria-label="Remove photo ${k+1}">×</button></div>`).join('');
+  $('#pc').textContent=`${cur.images.length}/${MAX}`;
+  $('#pick').disabled=cur.images.length>=MAX;
+}
+$('#eg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;cur.images.splice(+b.dataset.k,1);drawEditor()});
+$('#pick').onclick=()=>$('#file').click();
+$('#file').onchange=async e=>{
+  const files=[...e.target.files].slice(0,MAX-cur.images.length);e.target.value='';
+  if(!files.length)return;
+  $('#pick').disabled=true;toast('Adding photos…');
+  for(const f of files){try{cur.images.push(await shrink(f))}catch(_){toast('One photo could not be read')}}
+  drawEditor();
+};
+$('#cancel').onclick=()=>$('#dlg').close();
+$('#save').onclick=async()=>{
+  const model=$('#fm').value.trim();
+  if(!model){$('#fm').focus();toast('Enter the model name');return}
+  const m={id:cur.id,model,year:$('#fy').value.trim(),price:$('#fp').value.trim(),images:cur.images};
+  try{await persist(m)}catch(_){toast('Could not save to this browser. Storage may be full.');return}
+  const i=items.findIndex(x=>x.id===m.id);
+  if(i>=0)items[i]=m;else items.push(m);
+  sel.set(m.id,0);$('#dlg').close();render();toast('Saved '+m.id);
+};
+$('#add').onclick=()=>openEditor(null);
+$('#q').oninput=e=>{q=e.target.value;render()};
+
+(async()=>{
+  try{db=await openDB();items=await run('readonly',s=>s.getAll())||[]}
+  catch(_){db=null;toast('Saving is unavailable here. Changes will be lost when you close the page.')}
+  render();
+})();
+</script>
+</body></html>
