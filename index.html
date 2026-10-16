@@ -29,12 +29,12 @@ h1 small{font:500 14px Barlow,sans-serif;color:var(--mute);margin-left:8px}
 .btn:focus-visible,.search:focus-visible,input:focus-visible,.th:focus-visible{outline:3px solid var(--red);outline-offset:2px}
 main{max-width:1100px;margin:auto;padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:14px}
 .card{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
-.main{position:relative;aspect-ratio:4/3;flex:none;background:var(--chip);display:grid;place-items:center;color:var(--mute)}
-.main img{width:100%;height:100%;object-fit:cover;display:block}
+.main{position:relative;min-height:0;aspect-ratio:4/3;flex:none;background:var(--chip);display:grid;place-items:center;color:var(--mute)}
+.main img{width:100%;height:100%;object-fit:contain;display:block}
 .id{position:absolute;left:8px;top:8px;background:var(--ink);color:var(--bg);font:700 15px "Barlow Condensed",sans-serif;letter-spacing:.5px;padding:3px 8px;border-radius:5px}
 .cnt{position:absolute;right:8px;top:8px;background:rgba(0,0,0,.65);color:#fff;font-size:13px;padding:2px 8px;border-radius:5px}
 .thumbs{aspect-ratio:5/1;min-height:0;flex:none;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:4px;background:var(--card);overflow:hidden}
-.thumbs:empty{visibility:hidden}
+.thumbs:empty{display:none}
 .th{height:100%;min-height:0;aspect-ratio:auto;border:2px solid transparent;padding:0;border-radius:5px;overflow:hidden;background:var(--chip);cursor:pointer}
 .th img{width:100%;height:100%;object-fit:cover;display:block}
 .th.on{border-color:var(--red)}
@@ -73,7 +73,6 @@ label input{border:1.5px solid var(--line);background:var(--bg);border-radius:8p
   #add{min-height:44px}
   main{padding:8px;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
   .card{border-radius:7px}
-  .main{aspect-ratio:1}
   .id{left:4px;top:4px;padding:2px 4px;font-size:12px}
   .cnt{right:4px;top:4px;padding:2px 4px;font-size:11px}
   .info{padding:6px;gap:2px}
