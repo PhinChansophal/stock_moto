@@ -190,13 +190,36 @@ $('#list').addEventListener('click',async e=>{
 
 async function download(m){
   const d=window.claude?await claude.use('downloads').catch(()=>null):null;
-  if(!d){toast('Download is not available in this view. Open the page in claude.ai.');return}
-  let ok=0;
-  for(let i=0;i<m.images.length;i++){
-    try{await d.save({filename:`${m.id}-${m.model.replace(/[^\w]+/g,'-').replace(/^-|-$/g,'')}-${i+1}.jpg`,data:m.images[i]});ok++}
-    catch(err){if(err&&err.code==='declined')break;toast('Could not save photo '+(i+1));break}
+  const name=m.model.replace(/[^\w]+/g,'-').replace(/^-|-$/g,'')||'motorcycle';
+  if(d){
+    let ok=0;
+    for(let i=0;i<m.images.length;i++){
+      try{await d.save({filename:`${m.id}-${name}-${i+1}.jpg`,data:m.images[i]});ok++}
+      catch(err){if(err&&err.code==='declined')break;toast('Could not save photo '+(i+1));break}
+    }
+    if(ok)toast(`Saved ${ok} photo${ok>1?'s':''} to your device`);
+    return;
   }
-  if(ok)toast(`Saved ${ok} photo${ok>1?'s':''} to your device`);
+
+  const files=m.images.map((image,i)=>new File([image],`${m.id}-${name}-${i+1}.jpg`,{type:image.type||'image/jpeg'}));
+  if(navigator.share&&navigator.canShare&&navigator.canShare({files})){
+    try{
+      await navigator.share({files,title:`${m.id} ${m.model}`});
+      toast('Choose Save Image or Save to Files in the share menu.');
+    }catch(err){
+      if(err&&err.name!=='AbortError')toast('Could not share the photos. Please try again.');
+    }
+    return;
+  }
+
+  for(const file of files){
+    const a=document.createElement('a');
+    const objectUrl=URL.createObjectURL(file);
+    a.href=objectUrl;a.download=file.name;a.hidden=true;
+    document.body.append(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(objectUrl),60000);
+  }
+  toast(files.length>1?'Downloads started. Check your Downloads folder.':'Download started. Check your Downloads folder.');
 }
 
 function openEditor(m){
