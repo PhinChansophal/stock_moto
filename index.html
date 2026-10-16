@@ -13,12 +13,18 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 Barlow,system-
 button,input{font:inherit;color:inherit}
 header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:12px 14px;border-bottom:1px solid var(--line)}
 .bar{max-width:1100px;margin:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-h1{font:700 26px/1 "Barlow Condensed",Impact,sans-serif;margin:0 auto 0 0;letter-spacing:.3px}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0}
+.logo{display:block;width:56px;height:56px;flex:none;object-fit:cover;border-radius:8px}
+h1{font:700 26px/1 "Barlow Condensed",Impact,sans-serif;margin:0;letter-spacing:.3px}
 h1 small{font:500 14px Barlow,sans-serif;color:var(--mute);margin-left:8px}
-.search{flex:1 1 220px;min-width:0;border:1.5px solid var(--line);background:var(--card);border-radius:8px;padding:10px 12px}
+.search-wrap{display:flex;flex:1 1 220px;min-width:0}
+.search{flex:1;min-width:0;border:1.5px solid var(--line);background:var(--card);border-radius:8px;padding:10px 12px}
 .btn{border:1.5px solid var(--line);background:var(--card);border-radius:8px;padding:9px 14px;font-weight:600;cursor:pointer}
 .btn.red{background:var(--red);border-color:var(--red);color:var(--redink)}
 .btn.sm{padding:7px 10px;font-size:14px}
+.voice{width:44px;height:44px;flex:none;margin-left:6px;padding:9px;display:grid;place-items:center}
+.voice svg{width:22px;height:22px}
+.voice.listening{background:var(--red);border-color:var(--red);color:var(--redink)}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .btn:focus-visible,.search:focus-visible,input:focus-visible,.th:focus-visible{outline:3px solid var(--red);outline-offset:2px}
 main{max-width:1100px;margin:auto;padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:14px}
@@ -38,6 +44,10 @@ main{max-width:1100px;margin:auto;padding:14px;display:grid;grid-template-column
 .acts{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
 .acts .btn:first-child{flex:1 1 auto}
 .empty{grid-column:1/-1;text-align:center;color:var(--mute);padding:50px 10px}
+footer{max-width:1100px;margin:0 auto;padding:14px;text-align:center;border-top:1px solid var(--line);color:var(--mute)}
+footer a{display:inline-block;color:var(--red);font-weight:600;text-decoration:none;padding:8px}
+footer a:hover{text-decoration:underline}
+footer a:focus-visible{outline:3px solid var(--red);outline-offset:2px;border-radius:4px}
 dialog{border:none;border-radius:12px;padding:0;width:min(560px,calc(100vw - 24px));max-height:92vh;max-height:92dvh;background:var(--card);color:var(--ink)}
 dialog::backdrop{background:rgba(0,0,0,.55)}
 form{padding:16px;display:grid;gap:12px}
@@ -56,27 +66,46 @@ label input{border:1.5px solid var(--line);background:var(--bg);border-radius:8p
 @media(max-width:600px){
   header{padding:10px 12px}
   .bar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
-  h1{grid-column:1/-1}
-  .search{width:100%}
+  .brand{grid-column:1/-1}
+  .search-wrap{width:100%}
   #add{min-height:44px}
-  main{padding:12px;gap:12px}
+  main{padding:8px;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .card{border-radius:7px}
+  .main{aspect-ratio:1}
+  .id{left:4px;top:4px;padding:2px 4px;font-size:12px}
+  .cnt{right:4px;top:4px;padding:2px 4px;font-size:11px}
+  .info{padding:6px;gap:2px}
+  .model{font-size:18px}
+  .meta{font-size:12px}
+  .price{font-size:20px}
+  .acts{gap:4px;margin-top:6px}
+  .acts .btn{min-width:0;padding:5px;font-size:12px;overflow-wrap:anywhere}
+  .acts .btn:first-child{flex-basis:100%}
+  .acts .btn:not(:first-child){flex:1}
 }
 @media(max-width:430px){
   .bar{grid-template-columns:minmax(0,1fr)}
-  h1,.search,#add{grid-column:1}
+  .brand,.search-wrap,#add{grid-column:1}
   #add{width:100%}
   .two{grid-template-columns:1fr}
   form{padding:14px}
+  main{gap:6px;padding:6px}
+  .model{font-size:16px}
+  .meta{font-size:11px}
+  .price{font-size:18px}
+  .acts .btn{font-size:11px}
 }
 @media(prefers-reduced-motion:reduce){#toast{transition:none}}
 </style></head>
 <body>
 <header><div class="bar">
-<h1>Moto Stock<small id="count"></small></h1>
-<input id="q" class="search" type="search" placeholder="Search by model name or ID" aria-label="Search by model name or ID">
+<div class="brand"><img class="logo" src="moto-shop-logo.png" alt="Moto Shop logo"><h1>Moto Stock<small id="count"></small></h1></div>
+<div class="search-wrap"><input id="q" class="search" type="search" placeholder="Search by model name or ID" aria-label="Search by model name or ID">
+<button class="btn voice" id="voice" type="button" aria-label="Search by voice" aria-pressed="false" title="Search by voice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0M12 17v5m-4 0h8"></path></svg></button></div>
 <button class="btn red" id="add">+ Add motorcycle</button>
 </div></header>
 <main id="list"></main>
+<footer><a href="https://t.me/vl_motoshop" target="_blank" rel="noopener noreferrer">Join us on Telegram: @vl_motoshop</a></footer>
 
 <dialog id="dlg"><form id="f" method="dialog" onsubmit="return false">
 <h2 id="dt">Add motorcycle</h2>
@@ -104,8 +133,13 @@ function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');cl
 
 function openDB(){return new Promise((res,rej)=>{try{const r=indexedDB.open('motostock',1);r.onupgradeneeded=()=>r.result.createObjectStore('moto',{keyPath:'id'});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}})}
 function run(mode,fn){return new Promise((res,rej)=>{const t=db.transaction('moto',mode),r=fn(t.objectStore('moto'));t.oncomplete=()=>res(r&&r.result);t.onerror=()=>rej(t.error)})}
-async function persist(m){if(db)await run('readwrite',s=>s.put(m))}
+async function persist(m){if(!db)throw new Error('Browser storage is unavailable');await run('readwrite',s=>s.put(m))}
 async function unpersist(id){if(db)await run('readwrite',s=>s.delete(id))}
+async function protectStorage(){
+  if(!navigator.storage||!navigator.storage.persist||!navigator.storage.persisted)return;
+  try{if(!await navigator.storage.persisted()&&!await navigator.storage.persist())toast('Browser may clear saved data automatically.')}
+  catch(_){toast('Could not protect saved data from browser cleanup.')}
+}
 const num=id=>parseInt(String(id).replace(/\D/g,''),10)||0;
 function nextId(){return 'M-'+String(Math.max(0,...items.map(m=>num(m.id)))+1).padStart(3,'0')}
 
@@ -124,6 +158,15 @@ function render(){
   $('#count').textContent=items.length?`${list.length} of ${items.length}`:'';
   $('#list').innerHTML=list.length?list.map(card).join(''):
     `<div class="empty">${items.length?'No motorcycle matches your search.':'No motorcycles yet. Tap “Add motorcycle” to create the first one.'}</div>`;
+}
+async function autosaveEditor(){
+  const model=$('#fm').value.trim();
+  if(!cur||!model)return false;
+  const m={id:cur.id,model,year:$('#fy').value.trim(),price:$('#fp').value.trim(),images:[...cur.images]};
+  try{await persist(m)}catch(_){toast('Could not automatically save. Check browser storage.');return false}
+  const i=items.findIndex(x=>x.id===m.id);
+  if(i>=0)items[i]=m;else items.push(m);
+  render();toast('Saved '+m.id);return true;
 }
 function card(m){
   const n=m.images.length,i=Math.min(sel.get(m.id)||0,Math.max(0,n-1));
@@ -173,9 +216,11 @@ $('#file').onchange=async e=>{
   const files=[...e.target.files].slice(0,MAX-cur.images.length);e.target.value='';
   if(!files.length)return;
   $('#pick').disabled=true;toast('Adding photos…');
-  for(const f of files){try{cur.images.push(await shrink(f))}catch(_){toast('One photo could not be read')}}
+  for(const f of files){try{cur.images.push(await shrink(f));await autosaveEditor()}catch(_){toast('One photo could not be read')}}
+  if(!$('#fm').value.trim())toast('Enter a model name to automatically save uploaded photos');
   drawEditor();
 };
+for(const id of ['#fm','#fy','#fp'])$(id).addEventListener('change',()=>{if(cur&&cur.images.length)autosaveEditor()});
 $('#cancel').onclick=()=>$('#dlg').close();
 $('#save').onclick=async()=>{
   const model=$('#fm').value.trim();
@@ -188,9 +233,47 @@ $('#save').onclick=async()=>{
 };
 $('#add').onclick=()=>openEditor(null);
 $('#q').oninput=e=>{q=e.target.value;render()};
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+let recognition=null,listening=false;
+function setListening(value){
+  listening=value;
+  $('#voice').classList.toggle('listening',value);
+  $('#voice').setAttribute('aria-pressed',String(value));
+  $('#voice').setAttribute('aria-label',value?'Stop voice search':'Search by voice');
+}
+$('#voice').onclick=()=>{
+  if(!SpeechRecognition){toast('Voice search is not supported in this browser.');return}
+  if(listening){recognition.stop();return}
+  recognition=new SpeechRecognition();
+  recognition.lang=navigator.language||'en-US';
+  recognition.interimResults=false;
+  recognition.maxAlternatives=1;
+  recognition.onstart=()=>setListening(true);
+  recognition.onend=()=>setListening(false);
+  recognition.onerror=e=>{
+    setListening(false);
+    const messages={
+      'not-allowed':'Allow microphone access to use voice search.',
+      'service-not-allowed':'Voice search is blocked by this browser.',
+      'no-speech':'No speech detected. Try again.',
+      'audio-capture':'No microphone was found.',
+      'network':'Voice search needs an internet connection.'
+    };
+    toast(messages[e.error]||'Voice search could not start. Please try again.');
+  };
+  recognition.onresult=e=>{
+    const transcript=e.results[0][0].transcript.trim();
+    if(!transcript){toast('No search words were recognized. Try again.');return}
+    $('#q').value=transcript;
+    q=transcript;
+    render();
+    toast('Searching for: '+transcript);
+  };
+  try{recognition.start()}catch(_){setListening(false);toast('Voice search could not start. Please try again.')}
+};
 
 (async()=>{
-  try{db=await openDB();items=await run('readonly',s=>s.getAll())||[]}
+  try{db=await openDB();await protectStorage();items=await run('readonly',s=>s.getAll())||[]}
   catch(_){db=null;toast('Saving is unavailable here. Changes will be lost when you close the page.')}
   render();
 })();
