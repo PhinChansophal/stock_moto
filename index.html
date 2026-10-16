@@ -21,7 +21,7 @@ h1 small{font:500 14px Barlow,sans-serif;color:var(--mute);margin-left:8px}
 .btn.sm{padding:7px 10px;font-size:14px}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .btn:focus-visible,.search:focus-visible,input:focus-visible,.th:focus-visible{outline:3px solid var(--red);outline-offset:2px}
-main{max-width:1100px;margin:auto;padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+main{max-width:1100px;margin:auto;padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
 .main{position:relative;aspect-ratio:4/3;background:var(--chip);display:grid;place-items:center;color:var(--mute)}
 .main img{width:100%;height:100%;object-fit:cover;display:block}
@@ -32,13 +32,13 @@ main{max-width:1100px;margin:auto;padding:14px;display:grid;grid-template-column
 .th img{width:100%;height:100%;object-fit:cover;display:block}
 .th.on{border-color:var(--red)}
 .info{padding:8px 12px 12px;display:flex;flex-direction:column;gap:2px}
-.model{font:700 24px/1.1 "Barlow Condensed",Impact,sans-serif}
+.model{font:700 24px/1.1 "Barlow Condensed",Impact,sans-serif;overflow-wrap:anywhere}
 .meta{color:var(--mute)}
 .price{font:700 26px/1.1 "Barlow Condensed",sans-serif;color:var(--red);margin-top:4px}
 .acts{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
 .acts .btn:first-child{flex:1 1 auto}
 .empty{grid-column:1/-1;text-align:center;color:var(--mute);padding:50px 10px}
-dialog{border:none;border-radius:12px;padding:0;width:min(560px,94vw);max-height:92vh;background:var(--card);color:var(--ink)}
+dialog{border:none;border-radius:12px;padding:0;width:min(560px,calc(100vw - 24px));max-height:92vh;max-height:92dvh;background:var(--card);color:var(--ink)}
 dialog::backdrop{background:rgba(0,0,0,.55)}
 form{padding:16px;display:grid;gap:12px}
 form h2{font:700 24px "Barlow Condensed",sans-serif;margin:0}
@@ -53,6 +53,21 @@ label input{border:1.5px solid var(--line);background:var(--bg);border-radius:8p
 .row{display:flex;gap:8px;justify-content:flex-end}
 #toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20;max-width:90vw;text-align:center}
 #toast.show{opacity:1}
+@media(max-width:600px){
+  header{padding:10px 12px}
+  .bar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+  h1{grid-column:1/-1}
+  .search{width:100%}
+  #add{min-height:44px}
+  main{padding:12px;gap:12px}
+}
+@media(max-width:430px){
+  .bar{grid-template-columns:minmax(0,1fr)}
+  h1,.search,#add{grid-column:1}
+  #add{width:100%}
+  .two{grid-template-columns:1fr}
+  form{padding:14px}
+}
 @media(prefers-reduced-motion:reduce){#toast{transition:none}}
 </style></head>
 <body>
